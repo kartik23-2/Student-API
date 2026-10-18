@@ -1,5 +1,57 @@
 package main
 
+import (
+	"log"
+	"log/slog"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+    "context"
+    "time"
+
+	"github.com/kartik23-2/Student-API/internal/config"
+)
+
 func main() {
+	//load config
+	cfg := config.MustLoad()
+	//store database
+	//setup router
+	router := http.NewServeMux()
+	router.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request){
+		w.Write([]byte("hello world"))
+	})
+
+	//setup server
+	server:=http.Server{
+		Addr: cfg.Address,
+		Handler: router,
+	}
+
+	slog.Info("server started", slog.String("address", cfg.Address))
+
+	done:=make(chan os.Signal, 1)
+	signal.Notify(done, os.Interrupt, syscall.SIGTERM)
+	
+	go func(){
+		err:= server.ListenAndServe()
+		if err!=nil{
+			log.Fatal("error occured")
+		}
+	}()
+
+	<-done
+
+	slog.Info("server stopped")
+
+	ctx,cancel:=context.WithTimeout(context.Background(),5*time.Second)
+	defer cancel()
+
+	if err:=server.Shutdown(ctx); err!=nil{
+		slog.Error("failed to shutdown error", slog.String("error", err.Error()))
+	}
+	slog.Info("server stopped successfully")
+
 	
 }
