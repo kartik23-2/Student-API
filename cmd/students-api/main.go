@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"log/slog"
 	"net/http"
@@ -51,6 +52,8 @@ func main() {
 		slog.Error("failed to shutdown error", slog.String("error", err.Error()))
 	}
 	slog.Info("server stopped successfully")
+
+	fmt.Println("hello")
 
 	
 }
