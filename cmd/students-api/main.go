@@ -11,6 +11,7 @@ import (
     "time"
 
 	"github.com/kartik23-2/Student-API/internal/config"
+	"github.com/kartik23-2/Student-API/internal/http/handlers/student"
 )
 
 func main() {
@@ -19,9 +20,7 @@ func main() {
 	//store database
 	//setup router
 	router := http.NewServeMux()
-	router.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request){
-		w.Write([]byte("hello world"))
-	})
+	router.HandleFunc("POST /api/students", student.New())
 
 	//setup server
 	server:=http.Server{
