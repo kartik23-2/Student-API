@@ -11,7 +11,8 @@ import (
     "context"
     "time"
 
-	"github.com/kartik23-2/Student-API/internal/config"
+	"github.com/kartik23-2/Student-API/internal/storage/sqlite"
+    "github.com/kartik23-2/Student-API/internal/config"
 	"github.com/kartik23-2/Student-API/internal/http/handlers/student"
 )
 
@@ -19,6 +20,12 @@ func main() {
 	//load config
 	cfg := config.MustLoad()
 	//store database
+
+    _, err:=sqlite.New(cfg)
+	if err!=nil{
+		slog.Error("failed to initialize database", slog.String("error", err.Error()))
+		return
+	}
 	//setup router
 	router := http.NewServeMux()
 	router.HandleFunc("POST /api/students", student.New())
