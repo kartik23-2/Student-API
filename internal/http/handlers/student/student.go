@@ -1,18 +1,20 @@
 package student
 
 import (
-	"fmt"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
-	"github.com/kartik23-2/Student-API/internal/types"
-	"github.com/kartik23-2/Student-API/internal/utils/response"
-    "github.com/go-playground/validator/v10"
 	"log/slog"
 	"net/http"
+
+	"github.com/go-playground/validator/v10"
+	"github.com/kartik23-2/Student-API/internal/storage"
+	"github.com/kartik23-2/Student-API/internal/types"
+	"github.com/kartik23-2/Student-API/internal/utils/response"
 )
 
-func New() http.HandlerFunc {
+func New(storage storage.Storage) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
 

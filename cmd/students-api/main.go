@@ -26,9 +26,11 @@ func main() {
 		slog.Error("failed to initialize database", slog.String("error", err.Error()))
 		return
 	}
+	
+
 	//setup router
 	router := http.NewServeMux()
-	router.HandleFunc("POST /api/students", student.New())
+	router.HandleFunc("POST /api/students", student.New(store))
 
 	//setup server
 	server:=http.Server{
