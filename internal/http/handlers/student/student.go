@@ -38,9 +38,29 @@ func New(storage storage.Storage) http.HandlerFunc {
 			return
 		}
 
+		lastID,err := storage.CreateStudent(
+			student.Name,
+			student.Email,
+			student.Age,
+		)
 
+		if err != nil{
+			slog.Error("creating a student")
+			response.WriteJson(w,http.StatusBadRequest,response.GeneralError(err))
+			return
+		}
 
-		slog.Info("creating a student")
-		response.WriteJson(w,http.StatusOK,"student created successfully")
+		
+
+		slog.Info("student created successfully", slog.Int64("id", lastID))
+		response.WriteJson(w,http.StatusOK, map[string]int64{"id": lastID})
+	}
+}
+
+func GetById(storage storage.Storage) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		id:=r.PathValue("id")
+		slog.Info("get student by id", slog.String("id", id))
+		
 	}
 }
