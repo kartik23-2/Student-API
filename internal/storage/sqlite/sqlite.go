@@ -3,6 +3,7 @@ package sqlite
 import (
 	"database/sql"
 
+	"github.com/kartik23-2/Student-API/internal/types"
 	"github.com/kartik23-2/Student-API/internal/config"
 	_ "modernc.org/sqlite"
 )
@@ -48,5 +49,20 @@ func (s *Sqlite)CreateStudent(name string, email string, age int) (int64, error)
 		return 0, err
 	}
 	return lastInsertID, nil
+}
+
+func (s *Sqlite)GetStudentById(id int64) (types.Student, error){
+	stmt, err:=s.Db.Prepare("SELECT name, email, age FROM students WHERE id = $1")
+	if err!=nil{
+		return types.Student{}, err
+	}
+	defer stmt.Close()
+	
+	var student types.Student
+	err=stmt.QueryRow(id).Scan(&student.Name, &student.Email, &student.Age)
+	if err!=nil{
+		return types.Student{}, err
+	}
+	return student, nil
 }
 
