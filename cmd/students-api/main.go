@@ -14,6 +14,7 @@ import (
 	"github.com/kartik23-2/Student-API/internal/storage/sqlite"
     "github.com/kartik23-2/Student-API/internal/config"
 	"github.com/kartik23-2/Student-API/internal/http/handlers/student"
+	
 )
 
 func main() {
@@ -32,6 +33,7 @@ func main() {
 	router := http.NewServeMux()
 	router.HandleFunc("POST /api/students", student.New(storage))
 	router.HandleFunc("GET /api/students/{id}", student.GetById(storage))
+	router.HandleFunc("GET /api/students", student.GetAll(storage))
 
 	//setup server
 	server:=http.Server{

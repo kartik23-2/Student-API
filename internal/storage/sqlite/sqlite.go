@@ -2,7 +2,9 @@ package sqlite
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
+	
 
 	"github.com/kartik23-2/Student-API/internal/types"
 	"github.com/kartik23-2/Student-API/internal/config"
@@ -62,11 +64,41 @@ func (s *Sqlite)GetStudentById(id int64) (types.Student, error){
 	var student types.Student
 	err=stmt.QueryRow(id).Scan(&student.Name, &student.Email, &student.Age)
 	if err!=nil{
-		if err:=sql.ErrNoRows; err!=nil{
-			return types.Student{}, fmt.Errorf("student not found with id:%s",fmt.Sprint(id))
+		if errors.Is(err, sql.ErrNoRows) {
+			return types.Student{}, fmt.Errorf("student not found with id:%s", fmt.Sprint(id))
 		}
 		return types.Student{}, err
 	}
 	return student, nil
+}
+
+func (s *Sqlite)GetAll() ([]types.Student, error){
+	stmt, err:=s.Db.Prepare("SELECT name, email, age FROM students")
+	if err!=nil{
+		return nil, err
+	}
+	defer stmt.Close()
+	
+	rows, err:=stmt.Query()
+	if err!=nil{
+		return nil, err
+	}
+	defer rows.Close()
+	
+	var students []types.Student
+	for rows.Next() {
+		var student types.Student
+		err := rows.Scan(&student.Name, &student.Email, &student.Age)
+		if err != nil {
+			return nil, err
+		}
+		students = append(students, student)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return students, nil
 }
 
