@@ -2,6 +2,7 @@ package sqlite
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/kartik23-2/Student-API/internal/types"
 	"github.com/kartik23-2/Student-API/internal/config"
@@ -61,6 +62,9 @@ func (s *Sqlite)GetStudentById(id int64) (types.Student, error){
 	var student types.Student
 	err=stmt.QueryRow(id).Scan(&student.Name, &student.Email, &student.Age)
 	if err!=nil{
+		if err:=sql.ErrNoRows; err!=nil{
+			return types.Student{}, fmt.Errorf("student not found with id:%s",fmt.Sprint(id))
+		}
 		return types.Student{}, err
 	}
 	return student, nil

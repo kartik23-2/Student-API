@@ -1,7 +1,6 @@
 package student
 
 import (
-	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -65,13 +64,11 @@ func GetById(storage storage.Storage) http.HandlerFunc {
 			response.WriteJson(w, http.StatusBadRequest, response.GeneralError(err))
 			return
 		}
+		
+
 		student, err := storage.GetStudentById(intId)
 		if err != nil {
-			if errors.Is(err, sql.ErrNoRows) {
-				response.WriteJson(w, http.StatusNotFound, response.GeneralError(fmt.Errorf("student not found")))
-				return
-			}
-			slog.Error("error in getting student", slog.String("error", err.Error()))
+			slog.Error("error in getting student")
 			response.WriteJson(w, http.StatusInternalServerError, response.GeneralError(err))
 			return
 		}
