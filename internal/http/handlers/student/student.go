@@ -82,7 +82,6 @@ func GetById(storage storage.Storage) http.HandlerFunc {
 func GetAll(storage storage.Storage) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		slog.Info("get all students") 
-		
 
 		students, err := storage.GetAll()
 		if err != nil {
